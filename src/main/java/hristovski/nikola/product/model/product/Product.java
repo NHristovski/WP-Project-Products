@@ -1,11 +1,13 @@
 package hristovski.nikola.product.model.product;
 
-import hristovski.nikola.product.model.Category;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import hristovski.nikola.product.model.Rating;
+import hristovski.nikola.product.model.ShoppingCartItem;
+import hristovski.nikola.product.model.category.Category;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -13,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Product {
 
-    public Product(AddProductRequest addProductRequest) {
+    public Product(AddProductRequest addProductRequest, List<Category> categories) {
 
         this.id = null;
 
@@ -22,7 +24,7 @@ public class Product {
         this.imageLocation = addProductRequest.getImageLocation();
         this.price = addProductRequest.getPrice();
         this.stock = addProductRequest.getStock();
-        this.categories = new ArrayList<>();
+        this.categories = categories;
     }
 
     @Id
@@ -35,6 +37,26 @@ public class Product {
     private double price;
     private int stock;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     List<Category> categories;
+
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    List<Rating> ratings;
+//
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+//    List<ShoppingCartItem> shoppingCartItems;
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", imageLocation='" + imageLocation + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", stock=" + stock +
+                '}';
+    }
 }

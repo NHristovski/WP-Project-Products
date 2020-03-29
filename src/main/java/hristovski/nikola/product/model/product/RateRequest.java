@@ -9,6 +9,4 @@ public class RateRequest {
     private Long id;
     @NonNull
     private Integer rating;
-    @NonNull
-    private String username;
 }

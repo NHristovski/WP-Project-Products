@@ -2,11 +2,8 @@ package hristovski.nikola.product.service;
 
 import hristovski.nikola.product.exception.CategoryNotFoundException;
 import hristovski.nikola.product.exception.ProductNotFoundException;
-import hristovski.nikola.product.model.Category;
-import hristovski.nikola.product.model.product.AddProductRequest;
-import hristovski.nikola.product.model.product.Product;
-import hristovski.nikola.product.model.product.ProductResponse;
-import hristovski.nikola.product.model.product.RateRequest;
+import hristovski.nikola.product.model.category.Category;
+import hristovski.nikola.product.model.product.*;
 
 import java.util.List;
 
@@ -18,13 +15,19 @@ public interface ProductService {
 
     List<ProductResponse> getProducts(int from, int howMany, String username);
 
-    List<ProductResponse> getProductsSortedByRating(int from,int howMany, String username);
+    GetProductsResponse getProductsSortedByRating(int from, int howMany, String username);
 
-    List<ProductResponse> getProductsInCategory(int from, int howMany, String category, String username) throws CategoryNotFoundException;
+    GetProductsResponse getProductsInCategory(int from, int howMany, String category, String username) throws CategoryNotFoundException;
 
-    ProductResponse rateProduct(RateRequest rateRequest) throws ProductNotFoundException;
+    ProductResponse rateProduct(RateRequest rateRequest, String username) throws ProductNotFoundException;
 
     Product addProduct(AddProductRequest product);
-    Product editProduct(Product product);
+    Product editProduct(Long id, AddProductRequest product) throws ProductNotFoundException;
     void deleteProduct(Long productId);
+
+    void removeProductsFromCategory(Category one);
+
+    List<Product> search(String term);
+
+    int getProductsCount(Integer howMany);
 }

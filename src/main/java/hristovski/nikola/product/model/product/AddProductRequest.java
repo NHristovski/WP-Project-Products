@@ -1,7 +1,10 @@
 package hristovski.nikola.product.model.product;
 
+import hristovski.nikola.product.model.category.Category;
 import lombok.Data;
 import lombok.NonNull;
+
+import java.util.List;
 
 @Data
 public class AddProductRequest {
@@ -14,6 +17,8 @@ public class AddProductRequest {
 
     @NonNull
     private String description;
+
+    private List<String> categoryNames;
 
     @NonNull
     private Double price;

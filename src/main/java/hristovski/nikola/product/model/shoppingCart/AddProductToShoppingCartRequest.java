@@ -12,6 +12,4 @@ public class AddProductToShoppingCartRequest {
     @NonNull
     private Integer quantity;
 
-    @NonNull
-    private String username;
 }

@@ -2,16 +2,14 @@ package hristovski.nikola.product.controllers;
 
 import hristovski.nikola.product.exception.CategoryNotFoundException;
 import hristovski.nikola.product.exception.ProductNotFoundException;
-import hristovski.nikola.product.model.product.AddProductRequest;
-import hristovski.nikola.product.model.product.Product;
-import hristovski.nikola.product.model.product.ProductResponse;
-import hristovski.nikola.product.model.product.RateRequest;
+import hristovski.nikola.product.model.product.*;
 import hristovski.nikola.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -26,37 +24,48 @@ public class ProductController {
     @PostMapping("/add")
     public ResponseEntity<Product> addProduct(@Valid @RequestBody AddProductRequest addProductRequest) {
 
-        log.info("Adding product..");
-
         return ResponseEntity.ok(productService.addProduct(addProductRequest));
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponse>> getAll(@RequestParam("from") Integer from,
-                                                        @RequestParam("howMany") Integer howMany,
-                                                        @RequestParam("username") String username) {
-        return ResponseEntity.ok(productService.getProducts(from, howMany, username));
+    public ResponseEntity<GetProductsResponse> getAll(@RequestParam("from") Integer from,
+                                                      @RequestParam("howMany") Integer howMany,
+                                                      HttpServletRequest httpRequest) {
+
+        String username = httpRequest.getHeader("username");
+
+        List<ProductResponse> products = productService.getProducts(from, howMany, username);
+        int maxPages = productService.getProductsCount(howMany);
+
+        return ResponseEntity.ok(new GetProductsResponse(products, maxPages));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getOne(@PathVariable Long id,
-                                                  @RequestParam("username") String username)
+                                                  HttpServletRequest httpRequest)
             throws ProductNotFoundException {
+
+        String username = httpRequest.getHeader("username");
+
         return ResponseEntity.ok(productService.getById(id,username));
     }
 
     @PostMapping("/rate")
-    public ResponseEntity<ProductResponse> rateProduct(@Valid @RequestBody RateRequest rateRequest)
+    public ResponseEntity<ProductResponse> rateProduct(@Valid @RequestBody RateRequest rateRequest,
+                                                       HttpServletRequest httpRequest)
             throws ProductNotFoundException {
 
-        return ResponseEntity.ok(productService.rateProduct(rateRequest));
+        String username = httpRequest.getHeader("username");
+        return ResponseEntity.ok(productService.rateProduct(rateRequest,username));
     }
 
     @GetMapping("/forCategory/{categoryName}")
-    public ResponseEntity<List<ProductResponse>> getAll(@RequestParam("from") Integer from,
+    public ResponseEntity<GetProductsResponse> getAll(@RequestParam("from") Integer from,
                                                         @RequestParam("howMany") Integer howMany,
-                                                        @RequestParam("username") String username,
-                                                        @PathVariable String categoryName) throws CategoryNotFoundException {
+                                                        @PathVariable String categoryName,
+                                                        HttpServletRequest httpRequest) throws CategoryNotFoundException {
+
+        String username = httpRequest.getHeader("username");
 
         if (categoryName.equals("Top Products")){
             return ResponseEntity.ok(productService.getProductsSortedByRating(from,howMany,username));

@@ -15,7 +15,7 @@ public class ShoppingCart {
 
     private String username;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ShoppingCartItem> shoppingCartItems;
 
     public Double totalPrice(){

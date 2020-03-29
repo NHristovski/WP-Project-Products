@@ -1,6 +1,6 @@
 package hristovski.nikola.product.model.product;
 
-import hristovski.nikola.product.model.Category;
+import hristovski.nikola.product.model.category.Category;
 import lombok.Data;
 
 import java.util.List;

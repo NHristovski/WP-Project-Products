@@ -5,9 +5,10 @@ import hristovski.nikola.product.exception.InvalidQuantityException;
 import hristovski.nikola.product.exception.ProductNotFoundException;
 import hristovski.nikola.product.model.ShoppingCart;
 import hristovski.nikola.product.model.ShoppingCartItem;
+import hristovski.nikola.product.model.category.Category;
+import hristovski.nikola.product.model.product.AddProductRequest;
 import hristovski.nikola.product.model.product.Product;
 import hristovski.nikola.product.model.shoppingCart.BuyRequest;
-import hristovski.nikola.product.repository.ShoppingCartItemRepository;
 import hristovski.nikola.product.repository.ShoppingCartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -159,6 +160,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         for (int i = 0; i < items.size(); i++){
             if (items.get(i).getId() == itemId){
                 idx = i;
+                break;
             }
         }
 
@@ -168,7 +170,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         log.info("Removed item on idx {}, items now {}",idx,items);
         shoppingCartRepository.save(shoppingCart);
 
-        shoppingCartItemService.deleteShoppingCardItem(itemId);
+        //shoppingCartItemService.deleteShoppingCardItem(itemId);
     }
 
     @Override
@@ -193,7 +195,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     }
 
-    private void buyHelper(ShoppingCart shoppingCart) {
+    private void buyHelper(ShoppingCart shoppingCart) throws ProductNotFoundException {
         for (var item: shoppingCart.getShoppingCartItems()) {
             if (item.isPending()) {
                 item.setBought(true);
@@ -204,7 +206,21 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
                 product.setStock(product.getStock() - item.getQuantity());
 
                 shoppingCartItemService.editShoppingCardItem(item);
-                productService.editProduct(product);
+
+                AddProductRequest request = new AddProductRequest(product.getTitle(),
+                        product.getImageLocation(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getStock());
+
+                if (product.getCategories() != null) {
+                    request.setCategoryNames(product.getCategories().stream().map(Category::getCategoryName)
+                    .collect(Collectors.toList()));
+                }else{
+                    request.setCategoryNames(new ArrayList<>());
+                }
+
+                productService.editProduct(product.getId(), request);
             }
         }
     }

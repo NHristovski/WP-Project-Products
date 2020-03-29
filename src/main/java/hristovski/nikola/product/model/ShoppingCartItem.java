@@ -1,5 +1,6 @@
 package hristovski.nikola.product.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hristovski.nikola.product.model.product.Product;
 import lombok.*;
 
