@@ -1,0 +1,47 @@
+version: "3.7"
+
+services:
+  service-registry:
+    image: nikolancaid/service-registry
+    container_name: service-registry
+    networks:
+      - internal
+    ports:
+      - "8761:8761"
+  api-gateway:
+    image: nikolancaid/api-gateway
+    networks:
+      - internal
+    ports:
+      - "8762:8762"
+    container_name: api-gateway
+  auth-service:
+    image: nikolancaid/auth-service
+    networks:
+      - internal
+    ports:
+      - "9100:9100"
+    container_name: auth-service
+  products:
+    image: nikolancaid/products
+    networks:
+      - internal
+    ports:
+      - "9100:9100"
+    container_name: products
+    depends_on:
+      - postgres-products
+  postgres-products:
+    image: postgres
+    ports:
+      - "5432:5432"
+    container_name: pgproducts
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+
+
+networks:
+  internal:
+    name: internal
+    driver: bridge
