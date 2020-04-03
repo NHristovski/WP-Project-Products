@@ -63,7 +63,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCart getShoppingCartWithPendingItems(String username) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUsername(username);
+        ShoppingCart shoppingCart = getShoppingCart(username);
 
         List<ShoppingCartItem> allItems = shoppingCart.getShoppingCartItems();
 
@@ -133,7 +133,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCart getShoppingCartHistory(String username) {
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUsername(username);
+        ShoppingCart shoppingCart = getShoppingCart(username);
 
         List<ShoppingCartItem> allItems = shoppingCart.getShoppingCartItems();
 
